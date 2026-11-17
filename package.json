@@ -1,0 +1,24 @@
+{
+  "name": "mana-ai-starter",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "MANA AI Telugu/English chat demo with a secure server-side OpenAI API connection",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
+    "@capacitor/core": "^8.6.2",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "ls": "^1.0.0",
+    "openai": "^6.16.0"
+  }
+}

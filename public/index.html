@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="te">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080808">
+<title>MANA AI</title>
+<style>
+:root{--bg:#080808;--panel:#121212;--panel2:#1b1b1b;--line:#2b2b2b;--white:#f7f7f7;--muted:#a5a5a5;--silver:#c9c9c9;--purple:#a78bfa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font-family:Inter,system-ui,-apple-system,"Noto Sans Telugu",sans-serif;min-height:100vh}
+.app{max-width:760px;margin:auto;min-height:100vh;display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% -20%,#292929 0%,#080808 55%)}
+header{height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#090909ed;backdrop-filter:blur(12px);z-index:2}
+.brand{display:flex;align-items:center;gap:11px}.logo{width:39px;height:39px;border:1px solid #777;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#303030,#090909);box-shadow:0 0 20px #ffffff12;font-size:20px}.brand strong{font-size:17px;letter-spacing:1.7px}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.5px;margin-top:2px}
+.header-btn{border:1px solid var(--line);background:var(--panel);color:var(--white);border-radius:11px;padding:9px 12px;font-size:12px}
+main{flex:1;padding:28px 18px 18px;display:flex;flex-direction:column}.welcome{text-align:center;margin:34px 0 27px}.orb{margin:0 auto 18px;width:74px;height:74px;border-radius:24px;display:grid;place-items:center;font-size:34px;background:linear-gradient(145deg,#353535,#0d0d0d);border:1px solid #666;box-shadow:0 0 36px #ffffff16}.welcome h1{font-size:25px;margin:0 0 9px;letter-spacing:.2px}.welcome p{color:var(--muted);font-size:14px;line-height:1.6;margin:0}
+.suggestions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:5px 0 22px}.suggestion{background:linear-gradient(145deg,#171717,#101010);border:1px solid var(--line);color:#eee;border-radius:15px;padding:14px;text-align:left;min-height:68px;font-size:13px;line-height:1.45}.suggestion span{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+#chat{display:flex;flex-direction:column;gap:13px;padding-bottom:18px}.msg{max-width:88%;padding:12px 14px;border-radius:16px;font-size:14px;line-height:1.6;white-space:pre-wrap}.user{align-self:flex-end;background:#f1f1f1;color:#111;border-bottom-right-radius:5px}.bot{align-self:flex-start;background:#1a1a1a;border:1px solid #303030;color:#f5f5f5;border-bottom-left-radius:5px}.label{font-size:10px;color:#aaa;margin-bottom:4px;letter-spacing:.8px}
+.composer-wrap{position:sticky;bottom:0;padding:12px 14px 18px;background:linear-gradient(transparent,#080808 18%)}.composer{display:flex;align-items:center;gap:8px;background:#151515;border:1px solid #414141;border-radius:18px;padding:7px 8px 7px 15px;box-shadow:0 8px 30px #000}.composer input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;font-size:14px;padding:10px 0}.composer input::placeholder{color:#888}.iconbtn{width:39px;height:39px;border:1px solid #3a3a3a;background:#222;color:#fff;border-radius:13px;font-size:17px}.send{background:#f4f4f4;color:#090909;border:0;font-weight:700}#voice{background:linear-gradient(145deg,#6d28d9,#2e1065);border-color:#8b5cf6;box-shadow:0 0 18px #8b5cf655}.disclaimer{text-align:center;color:#777;font-size:10px;margin-top:9px}
+footer{text-align:center;color:#777;font-size:10px;padding:0 12px 12px}
+@media(min-width:600px){main{padding-top:40px}.welcome{margin-top:48px}.suggestions{gap:13px}.suggestion{padding:17px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand"><img src="/mana-ai-logo.png" class="logo" alt="MANA AI"><div><strong>MANA AI</strong><small>YOUR SMART AI ASSISTANT</small></div></div>
+  <button class="header-btn" id="newChat">＋ New chat</button>
+</header>
+<main>
+  <section class="welcome" id="welcome">
+    <div class="orb">✧</div>
+    <h1>నమస్తే! నేను MANA AI</h1>
+    <p>మీకు ఏం సహాయం కావాలి?<br>తెలుగు లేదా Englishలో అడగండి.</p>
+  </section>
+  <section class="suggestions" id="suggestions">
+    <button class="suggestion" data-q="నాకు ఒక మంచి వ్యాపార ఆలోచన చెప్పు">💡 కొత్త ఆలోచనలు<span>Ideas & planning</span></button>
+    <button class="suggestion" data-q="ఈరోజు నాకు ఒక చిన్న ఇంగ్లీష్ పాఠం నేర్పించు">📚 నేర్చుకోవడానికి<span>Learn something new</span></button>
+    <button class="suggestion" data-q="ఒక మంచి తెలుగు మెసేజ్ రాయు">✍️ రాయడంలో సహాయం<span>Writing & messages</span></button>
+    <button class="suggestion" data-q="నాకు ఒక సులభమైన వంటకం చెప్పు">🍲 రోజువారీ సహాయం<span>Everyday help</span></button>
+  </section>
+  <section id="chat" aria-live="polite"></section>
+</main>
+<div class="composer-wrap">
+  <form class="composer" id="form">
+    <input id="prompt" autocomplete="off" placeholder="Message MANA AI..." aria-label="Message MANA AI">
+    <button class="iconbtn" type="button" id="voice" title="Voice input">🎙</button>
+    <button class="iconbtn send" type="submit" aria-label="Send">➤</button>
+  </form>
+  <div class="disclaimer">MANA AI • AI API ద్వారా సమాధానాలు వస్తాయి; వినియోగానికి ఛార్జీలు ఉండవచ్చు</div>
+</div>
+<footer>Made with care · MANA AI</footer>
+</div>
+<script>
+const chat=document.getElementById('chat');
+const input=document.getElementById('prompt');
+const history=[];
+let sending=false;
+
+function add(text,who){
+  const box=document.createElement('div');
+  box.className='msg '+who;
+  if(who==='bot'){
+    const label=document.createElement('div');
+    label.className='label';
+    label.textContent='MANA AI';
+    box.appendChild(label);
+  }
+  const content=document.createElement('div');
+  content.textContent=text;
+  box.appendChild(content);
+  chat.appendChild(box);
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+  return box;
+}
+
+async function send(question){
+  const q=question.trim();
+  if(!q || sending) return;
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('suggestions').style.display='none';
+  add(q,'user');
+  history.push({role:'user',content:q});
+  input.value='';
+  sending=true;
+  const sendButton=document.querySelector('.send');
+  sendButton.disabled=true;
+  sendButton.textContent='…';
+  const typing=add('సమాధానం సిద్ధం చేస్తున్నాను…','bot');
+  try{
+    const response=await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:history.slice(-12)})
+    });
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(data.error || 'సర్వర్‌తో కనెక్షన్ కాలేదు.');
+    const answer=(data.reply || '').trim() || 'క్షమించండి, సమాధానం రాలేదు. మళ్లీ ప్రయత్నించండి.';
+    typing.remove();
+    add(answer,'bot');
+    history.push({role:'assistant',content:answer});
+    if(history.length>12) history.splice(0,history.length-12);
+  }catch(error){
+    typing.remove();
+    history.pop(); // Do not keep a failed turn in the next request's context.
+    add('ఇప్పుడు AIకి కనెక్ట్ కాలేకపోయాను. ఇంటర్నెట్, సర్వర్, API Key సెట్టింగ్స్ చెక్ చేసి మళ్లీ ప్రయత్నించండి. ('+error.message+')','bot');
+  }finally{
+    sending=false;
+    sendButton.disabled=false;
+    sendButton.textContent='➤';
+    input.focus();
+  }
+}
+
+document.getElementById('form').addEventListener('submit',event=>{
+  event.preventDefault();
+  send(input.value);
+});
+
+document.querySelectorAll('.suggestion').forEach(button=>{
+  button.addEventListener('click',()=>send(button.dataset.q));
+});
+
+document.getElementById('newChat').addEventListener('click',()=>{
+  chat.innerHTML='';
+  history.length=0;
+  document.getElementById('welcome').style.display='block';
+  document.getElementById('suggestions').style.display='grid';
+  input.value='';
+});
+
+document.getElementById('voice').addEventListener('click',()=>{
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRecognition){
+    add('ఈ బ్రౌజర్‌లో voice input అందుబాటులో లేదు. Chromeలో ప్రయత్నించండి.','bot');
+    return;
+  }
+  const recognition=new SpeechRecognition();
+  recognition.lang='te-IN';
+  recognition.onresult=event=>{input.value=event.results[0][0].transcript;};
+  recognition.onerror=()=>add('వాయిస్ గుర్తించలేకపోయాను. మళ్లీ ప్రయత్నించండి.','bot');
+  recognition.start();
+});
+</script>
+</body>
+</html>
