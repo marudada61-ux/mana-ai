@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import OpenAI from 'openai';
@@ -22,6 +23,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 // This starter serves its own frontend, so it does not enable cross-origin access.
 // CSP is disabled here because the first demo keeps its CSS/JS inline; add a strict CSP before production.
 app.use(helmet({ contentSecurityPolicy: false }));
+app.use(cors({ origin: ['https://localhost', 'capacitor://localhost', 'http://localhost'], methods: ['GET', 'POST'], allowedHeaders: ['Content-Type'] }));
 app.use(express.json({ limit: '20kb' }));
 
 const chatLimiter = rateLimit({
