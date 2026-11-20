@@ -18,12 +18,50 @@ main{flex:1;padding:28px 18px 18px;display:flex;flex-direction:column}.welcome{t
 .composer-wrap{position:sticky;bottom:0;padding:12px 14px 18px;background:linear-gradient(transparent,#080808 18%)}.composer{display:flex;align-items:center;gap:8px;background:#151515;border:1px solid #414141;border-radius:18px;padding:7px 8px 7px 15px;box-shadow:0 8px 30px #000}.composer input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;font-size:14px;padding:10px 0}.composer input::placeholder{color:#888}.iconbtn{width:39px;height:39px;border:1px solid #3a3a3a;background:#222;color:#fff;border-radius:13px;font-size:17px}.send{background:#f4f4f4;color:#090909;border:0;font-weight:700}#voice{background:linear-gradient(145deg,#6d28d9,#2e1065);border-color:#8b5cf6;box-shadow:0 0 18px #8b5cf655}.disclaimer{text-align:center;color:#777;font-size:10px;margin-top:9px}
 footer{text-align:center;color:#777;font-size:10px;padding:0 12px 12px}
 @media(min-width:600px){main{padding-top:40px}.welcome{margin-top:48px}.suggestions{gap:13px}.suggestion{padding:17px}}
+
+#authScreen{min-height:100vh;display:grid;place-items:center;padding:22px;background:radial-gradient(ellipse at top,#292929,#080808 65%)}
+.auth-card{width:100%;max-width:390px;background:#151515;border:1px solid #383838;border-radius:22px;padding:28px;box-shadow:0 15px 50px #000}
+.auth-card h1{text-align:center;margin:0 0 8px;font-size:27px}
+.auth-card p{text-align:center;color:#aaa;font-size:13px;margin-bottom:24px}
+.auth-card input{width:100%;padding:14px;margin:7px 0;background:#222;border:1px solid #444;border-radius:11px;color:white;font-size:14px;box-sizing:border-box}
+.auth-card button{width:100%;padding:13px;margin-top:12px;border:0;border-radius:11px;font-weight:bold;font-size:14px}
+#authSubmit{background:#f4f4f4;color:#111}
+.auth-links{text-align:center;margin-top:18px;color:#aaa;font-size:13px}
+.auth-links button{width:auto;background:none;color:#c4b5fd;padding:5px}
+#authMessage{color:#fca5a5;text-align:center;font-size:13px;overflow-wrap:anywhere}
+#appShell{display:none}
+
 </style>
 </head>
 <body>
-<div class="app">
+
+<section id="authScreen">
+  <div class="auth-card">
+    <div class="orb">✧</div>
+    <h1 id="authTitle">Welcome Back</h1>
+    <p>MANA AI • Your Smart AI Assistant</p>
+    <form id="authForm">
+      <input id="authName" type="text" placeholder="Your Name" style="display:none">
+      <input id="authEmail" type="email" placeholder="Email Address" required>
+      <input id="authPassword" type="password" placeholder="Password (6+ characters)" minlength="6" required>
+      <button id="authSubmit" type="submit">Login</button>
+    </form>
+    <div class="auth-links">
+      <button id="forgotPassword" type="button">Forgot Password?</button>
+      <br>
+      <span>New user?</span>
+      <button id="showSignup" type="button">Create Account</button>
+      <button id="showLogin" type="button">Back to Login</button>
+    </div>
+    <p id="authMessage"></p>
+  </div>
+</section>
+
+<div class="app" id="appShell">
 <header>
   <div class="brand"><img src="/mana-ai-logo.png" class="logo" alt="MANA AI"><div><strong>MANA AI</strong><small>YOUR SMART AI ASSISTANT</small></div></div>
+  <span id="userEmail" style="font-size:11px;color:#aaa"></span>
+  <button class="header-btn" id="logoutButton">Logout</button>
   <button class="header-btn" id="newChat">＋ New chat</button>
 </header>
 <main>
@@ -50,6 +88,7 @@ footer{text-align:center;color:#777;font-size:10px;padding:0 12px 12px}
 </div>
 <footer>Made with care · MANA AI</footer>
 </div>
+<script type="module" src="/js/auth-ui.js"></script>
 <script>
 const chat=document.getElementById('chat');
 const input=document.getElementById('prompt');

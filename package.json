@@ -18,6 +18,7 @@
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
+    "firebase": "^13.4.0",
     "helmet": "^8.1.0",
     "ls": "^1.0.0",
     "openai": "^6.16.0"
