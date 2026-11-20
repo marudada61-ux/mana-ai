@@ -162,3 +162,63 @@ themeButton.textContent =
   document.body.classList.contains('light')
     ? '🌙 Switch to Dark Mode'
     : '☀️ Switch to Light Mode';
+
+// MANA AI Settings Navigation
+document.getElementById('settingsButton').onclick = () => {
+  profileMenu.style.display = 'none';
+  document.getElementById('settingsPage').style.display = 'block';
+};
+
+document.getElementById('closeSettings').onclick = () => {
+  document.getElementById('settingsPage').style.display = 'none';
+  profileMenu.style.display = 'block';
+};
+
+document.getElementById('themeSetting').onclick = () => {
+  themeButton.click();
+};
+
+document.getElementById('aboutSetting').onclick = () => {
+  alert('MANA AI\nYour Smart AI Assistant\nMade with care ❤️');
+};
+
+// Edit Profile Name
+document.getElementById('editProfileSetting').onclick = async () => {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const name = prompt('మీ కొత్త పేరు నమోదు చేయండి:', user.displayName || '');
+
+  if (name && name.trim()) {
+    try {
+      await updateProfile(user, { displayName: name.trim() });
+      document.getElementById('profileName').textContent = name.trim();
+      alert('Profile Name Updated Successfully!');
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+};
+
+// Notification Preference
+const notificationSetting = document.getElementById('notificationSetting');
+
+function updateNotificationButton() {
+  const enabled = localStorage.getItem('manaNotifications') === 'on';
+  notificationSetting.textContent = enabled
+    ? '🔔 Notifications: ON'
+    : '🔕 Notifications: OFF';
+}
+
+updateNotificationButton();
+
+notificationSetting.onclick = () => {
+  const enabled = localStorage.getItem('manaNotifications') === 'on';
+  localStorage.setItem('manaNotifications', enabled ? 'off' : 'on');
+  updateNotificationButton();
+};
+
+// Privacy and Security
+document.getElementById('privacySetting').onclick = () => {
+  alert('🔒 MANA AI Privacy & Security\n\nమీ Login Firebase ద్వారా నిర్వహించబడుతుంది.\nమీ Password ఇతరులతో పంచుకోవద్దు.\n\nAccount Security కోసం Logout ఉపయోగించండి.');
+};
