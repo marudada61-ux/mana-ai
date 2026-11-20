@@ -91,14 +91,48 @@ document.getElementById('closeProfile').onclick = () => {
   profileMenu.style.display = 'none';
 };
 
-document.getElementById('profilePhotoInput').onchange = event => {
+const profilePhotoInput = document.getElementById('profilePhotoInput');
+const profileAvatar = document.getElementById('profileAvatar');
+
+function showProfilePhoto(photo) {
+  profileAvatar.innerHTML =
+    `<img src="${photo}" style="width:90px;height:90px;border-radius:50%;object-fit:cover;">`;
+}
+
+const savedPhoto = localStorage.getItem('manaProfilePhoto');
+if (savedPhoto) showProfilePhoto(savedPhoto);
+
+profilePhotoInput.onchange = event => {
   const file = event.target.files[0];
   if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    alert('దయచేసి Image ఎంచుకోండి.');
+    return;
+  }
 
   const reader = new FileReader();
   reader.onload = () => {
-    document.getElementById('profileAvatar').innerHTML =
-      `<img src="${reader.result}" style="width:90px;height:90px;border-radius:50%;object-fit:cover;">`;
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      const size = Math.min(img.width, img.height);
+      ctx.drawImage(img,
+        (img.width-size)/2, (img.height-size)/2,
+        size, size, 0, 0, 256, 256);
+
+      const photo = canvas.toDataURL('image/jpeg', 0.75);
+      try {
+        localStorage.setItem('manaProfilePhoto', photo);
+        showProfilePhoto(photo);
+        alert('Profile Picture Saved!');
+      } catch (error) {
+        alert('Photo Save కాలేదు. మరో చిన్న Image ప్రయత్నించండి.');
+      }
+    };
+    img.src = reader.result;
   };
   reader.readAsDataURL(file);
 };
