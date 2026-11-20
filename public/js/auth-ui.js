@@ -70,3 +70,61 @@ onAuthStateChanged(auth, user => {
 });
 
 document.getElementById('logoutButton').onclick = () => signOut(auth);
+
+// MANA AI Profile Menu
+const profileMenu = document.getElementById('profileMenu');
+
+document.getElementById('profileButton').onclick = () => {
+  const user = auth.currentUser;
+
+  document.getElementById('profileName').textContent =
+    user?.displayName || 'My Profile';
+
+  document.getElementById('profileEmail').textContent =
+    user?.email || '';
+
+  profileMenu.style.display =
+    profileMenu.style.display === 'none' ? 'block' : 'none';
+};
+
+document.getElementById('closeProfile').onclick = () => {
+  profileMenu.style.display = 'none';
+};
+
+document.getElementById('profilePhotoInput').onchange = event => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    document.getElementById('profileAvatar').innerHTML =
+      `<img src="${reader.result}" style="width:90px;height:90px;border-radius:50%;object-fit:cover;">`;
+  };
+  reader.readAsDataURL(file);
+};
+
+// Dark and Light Theme
+const themeButton = document.getElementById('themeButton');
+
+if (localStorage.getItem('manaTheme') === 'light') {
+  document.body.classList.add('light');
+}
+
+themeButton.onclick = () => {
+  document.body.classList.toggle('light');
+
+  const theme = document.body.classList.contains('light')
+    ? 'light'
+    : 'dark';
+
+  localStorage.setItem('manaTheme', theme);
+
+  themeButton.textContent = theme === 'light'
+    ? '🌙 Switch to Dark Mode'
+    : '☀️ Switch to Light Mode';
+};
+
+themeButton.textContent =
+  document.body.classList.contains('light')
+    ? '🌙 Switch to Dark Mode'
+    : '☀️ Switch to Light Mode';
