@@ -109,6 +109,14 @@ body.light .composer-wrap { background:linear-gradient(transparent,#f5f5f5 18%);
   <button class="header-btn" id="closeSettings">✖ Close Settings</button>
 </div>
 
+<div id="historyPage" style="display:none;padding:18px;margin:12px;background:var(--panel);border:1px solid var(--line);border-radius:16px;">
+  <h2>💬 Chat History</h2>
+  <div id="historyList">
+    <p style="color:var(--muted)">మీ పాత Chats ఇక్కడ కనిపిస్తాయి.</p>
+  </div>
+  <button class="header-btn" id="closeHistory">✖ Close History</button>
+</div>
+
 <main>
   <section class="welcome" id="welcome">
     <div class="orb">✧</div>
@@ -138,6 +146,60 @@ body.light .composer-wrap { background:linear-gradient(transparent,#f5f5f5 18%);
 const chat=document.getElementById('chat');
 const input=document.getElementById('prompt');
 const history=[];
+let currentChatId = Date.now().toString();
+let currentChatMessages = [];
+
+function getSavedChats() {
+  return JSON.parse(localStorage.getItem('manaChatHistory') || '[]');
+}
+
+function saveCurrentChat() {
+  if (!currentChatMessages.length) return;
+  const chats = getSavedChats();
+  const item = {
+    id: currentChatId,
+    title: (currentChatMessages.find(m => m.role === 'user')?.content || 'New Chat').slice(0, 35),
+    updatedAt: Date.now(),
+    messages: currentChatMessages
+  };
+  const index = chats.findIndex(c => c.id === currentChatId);
+  if (index >= 0) chats[index] = item;
+  else chats.unshift(item);
+  localStorage.setItem('manaChatHistory', JSON.stringify(chats.slice(0, 50)));
+}
+
+function renderHistoryList() {
+  const list = document.getElementById('historyList');
+  const chats = getSavedChats();
+  list.innerHTML = '';
+
+  if (!chats.length) {
+    list.textContent = 'ఇంకా పాత Chats ఏమీ లేవు.';
+    return;
+  }
+
+  chats.forEach(item => {
+    const button = document.createElement('button');
+    button.className = 'header-btn';
+    button.style.display = 'block';
+    button.style.width = '100%';
+    button.style.margin = '8px 0';
+    button.textContent = '💬 ' + item.title;
+    button.onclick = () => {
+      if (sending) return;
+      currentChatId = item.id;
+      currentChatMessages = [...item.messages];
+      history.length = 0;
+      history.push(...currentChatMessages.slice(-12));
+      chat.innerHTML = '';
+      currentChatMessages.forEach(m => add(m.content, m.role === 'user' ? 'user' : 'bot'));
+      document.getElementById('welcome').style.display = 'none';
+      document.getElementById('suggestions').style.display = 'none';
+      document.getElementById('historyPage').style.display = 'none';
+    };
+    list.appendChild(button);
+  });
+}
 let sending=false;
 
 function add(text,who){
@@ -164,6 +226,7 @@ async function send(question){
   document.getElementById('suggestions').style.display='none';
   add(q,'user');
   history.push({role:'user',content:q});
+  currentChatMessages.push({role:'user',content:q});
   input.value='';
   sending=true;
   const sendButton=document.querySelector('.send');
@@ -182,10 +245,13 @@ async function send(question){
     typing.remove();
     add(answer,'bot');
     history.push({role:'assistant',content:answer});
+    currentChatMessages.push({role:'assistant',content:answer});
+    saveCurrentChat();
     if(history.length>12) history.splice(0,history.length-12);
   }catch(error){
     typing.remove();
-    history.pop(); // Do not keep a failed turn in the next request's context.
+    history.pop(); // Remove failed user message.
+    currentChatMessages.pop();
     add('ఇప్పుడు AIకి కనెక్ట్ కాలేకపోయాను. ఇంటర్నెట్, సర్వర్, API Key సెట్టింగ్స్ చెక్ చేసి మళ్లీ ప్రయత్నించండి. ('+error.message+')','bot');
   }finally{
     sending=false;
@@ -207,6 +273,8 @@ document.querySelectorAll('.suggestion').forEach(button=>{
 document.getElementById('newChat').addEventListener('click',()=>{
   chat.innerHTML='';
   history.length=0;
+  currentChatMessages=[];
+  currentChatId=Date.now().toString();
   document.getElementById('welcome').style.display='block';
   document.getElementById('suggestions').style.display='grid';
   input.value='';
@@ -224,6 +292,18 @@ document.getElementById('voice').addEventListener('click',()=>{
   recognition.onerror=()=>add('వాయిస్ గుర్తించలేకపోయాను. మళ్లీ ప్రయత్నించండి.','bot');
   recognition.start();
 });
+
+  // Chat History Navigation
+  document.getElementById('historyButton').onclick = () => {
+    document.getElementById('profileMenu').style.display = 'none';
+    renderHistoryList();
+    document.getElementById('historyPage').style.display = 'block';
+  };
+
+  document.getElementById('closeHistory').onclick = () => {
+    document.getElementById('historyPage').style.display = 'none';
+    document.getElementById('profileMenu').style.display = 'block';
+  };
 </script>
 </body>
 </html>
