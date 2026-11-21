@@ -198,6 +198,23 @@ function renderHistoryList() {
       document.getElementById('historyPage').style.display = 'none';
     };
     list.appendChild(button);
+
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'header-btn';
+    deleteButton.textContent = '🗑️ Delete';
+    deleteButton.style.margin = '4px';
+    deleteButton.onclick = (event) => {
+      event.stopPropagation();
+
+      if (!confirm('ఈ Chat తొలగించాలా?')) return;
+
+      const updatedChats = getSavedChats().filter(c => c.id !== item.id);
+      localStorage.setItem('manaChatHistory', JSON.stringify(updatedChats));
+
+      renderHistoryList();
+    };
+
+    list.appendChild(deleteButton);
   });
 }
 let sending=false;
