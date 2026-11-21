@@ -260,7 +260,30 @@ async function send(question){
     if(!response.ok) throw new Error(data.error || 'సర్వర్‌తో కనెక్షన్ కాలేదు.');
     const answer=(data.reply || '').trim() || 'క్షమించండి, సమాధానం రాలేదు. మళ్లీ ప్రయత్నించండి.';
     typing.remove();
-    add(answer,'bot');
+    const answerBox = add(answer,'bot');
+
+    const speakButton = document.createElement('button');
+    speakButton.className = 'header-btn';
+    speakButton.textContent = '🔊 వినండి';
+    speakButton.style.marginTop = '8px';
+
+    speakButton.onclick = () => {
+      if (!('speechSynthesis' in window)) {
+        alert('Voice feature ఈ Deviceలో అందుబాటులో లేదు.');
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const speech = new SpeechSynthesisUtterance(answer);
+      speech.lang = /[\u0C00-\u0C7F]/.test(answer) ? 'te-IN' : 'en-IN';
+      speech.rate = 0.9;
+
+      window.speechSynthesis.speak(speech);
+    };
+
+    answerBox.appendChild(speakButton);
+
     history.push({role:'assistant',content:answer});
     currentChatMessages.push({role:'assistant',content:answer});
     saveCurrentChat();
